@@ -1,0 +1,35 @@
+{
+  "name": "@ennuicastr/mprpc",
+  "version": "0.0.1",
+  "description": "RPC over MessagePorts and/or Workers",
+  "main": "src/main.js",
+  "types": "src/main.ts",
+  "exports": {
+      ".": {
+          "types": "./src/main.ts",
+          "default": "./src/main.js"
+      },
+      "./receiver": {
+          "types": "./src/main-receiver.ts",
+          "default": "./src/main-receiver.js"
+      },
+      "./target": {
+          "types": "./src/main-target.ts",
+          "default": "./src/main-target.js"
+      }
+  },
+  "scripts": {
+    "build": "tsc && rollup -c",
+    "clean": "rm -rf dist src/*.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Yahweasel",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "rollup": "^4.34.8",
+    "tslib": "^2.8.1",
+    "typescript": "^5.7.3"
+  }
+}
