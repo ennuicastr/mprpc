@@ -78,8 +78,15 @@ export function rpcReceiver(target: any, port: RPCReceiverPort) {
                     ret.ret = ret.ret.return;
             } else if (ret.ex && ret.ex.transfer) {
                 transfer = ret.ex.transfer;
+                if ("return" in ret.ex)
+                    ret.ex = ret.ex.return;
             }
-            port.postMessage(ret, transfer);
+            try {
+                port.postMessage(ret, transfer);
+            } catch (ex) {
+                ret.ex = "" + ret.ex;
+                port.postMessage(ret, transfer);
+            }
         }
     });
 }
