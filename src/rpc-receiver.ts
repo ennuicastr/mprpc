@@ -31,7 +31,7 @@ export type RPCReceiverPort = {
  * @param port  MessagePort (or Worker, etc) to send/receive RPC messages.
  */
 export function rpcReceiver(target: any, port: RPCReceiverPort) {
-    port.addEventListener("message", async (ev: MessageEvent) => {
+    port.addEventListener("message", (ev: MessageEvent) => {
         const msg = ev.data;
         if (!msg || (msg.c !== "rpc" && msg.c !== "rpcv")) return;
 
@@ -45,25 +45,39 @@ export function rpcReceiver(target: any, port: RPCReceiverPort) {
             id: ev.data.id
         };
         try {
-            ret.ret = await f.apply(target, ev.data.args);
+            ret.ret = f.apply(target, ev.data.args);
         } catch (ex) {
             ret.ex = ex;
         }
-        if (msg.c === "rpcv") {
-            if (ret.ex)
-                console.error("Unhandled exception:", ret.ex);
-            return;
+
+        // Maybe wait for promises
+        if (ret.ret && ret.ret.then) {
+            ret.ret.then(
+                (x: any) => ret.ret = x
+            ).catch(
+                (ex: any) => ret.ex = ex
+            ).then(then);
+        } else {
+            then();
         }
 
-        // Process the transfer out of the return
-        let transfer: any[] = [];
-        if (ret.ret && ret.ret.transfer) {
-            transfer = ret.ret.transfer;
-            if ("return" in ret.ret)
-                ret.ret = ret.ret.return;
-        } else if (ret.ex && ret.ex.transfer) {
-            transfer = ret.ex.transfer;
+        function then() {
+            if (msg.c === "rpcv") {
+                if (ret.ex)
+                    console.error("Unhandled exception:", ret.ex);
+                return;
+            }
+
+            // Process the transfer out of the return
+            let transfer: any[] = [];
+            if (ret.ret && ret.ret.transfer) {
+                transfer = ret.ret.transfer;
+                if ("return" in ret.ret)
+                    ret.ret = ret.ret.return;
+            } else if (ret.ex && ret.ex.transfer) {
+                transfer = ret.ex.transfer;
+            }
+            port.postMessage(ret, transfer);
         }
-        port.postMessage(ret, transfer);
     });
 }
