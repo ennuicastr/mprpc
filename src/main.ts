@@ -17,10 +17,12 @@
 import * as mReceiver from "./main-receiver";
 import * as mTarget from "./main-target";
 
+export type RPCReceiver<T> = mReceiver.RPCReceiver<T>;
 export type RCPReceiverPort = mReceiver.RCPReceiverPort;
 export const rpcReceiver = mReceiver.rpcReceiver;
 export const rpcWorkerMain = mReceiver.rpcWorkerMain;
 
+export type Async<T> = mTarget.Async<T>;
 export type CollectableWorker = mTarget.CollectableWorker;
 export const CollectableWorker = mTarget.CollectableWorker;
 export type RPCTargetPort = mTarget.RPCTargetPort;

@@ -32,30 +32,29 @@ export class RPCTarget {
      * Call this remote procedure call.
      * @param func  Function name to call.
      * @param args  Arguments to the function.
+     * @param transfer  Values to transfer in the RPC.
      */
-    rpc(func: string, args: any[]) {
-        return this._rpc("rpc", true, func, args)!;
+    rpc(func: string, args: any[], transfer?: Transferable[]) {
+        return this._rpc("rpc", true, func, args, transfer)!;
     }
 
     /**
      * Call this remote procedure call, void (ignore any return OR EXCEPTION).
      */
-    rpcv(func: string, args: any[]) {
-        this._rpc("rpcv", false, func, args);
+    rpcv(func: string, args: any[], transfer?: Transferable[]) {
+        this._rpc("rpcv", false, func, args, transfer);
     }
 
     /**
      * @private
      * Underlying RPC messenger method.
      */
-    private _rpc(c: string, reply: boolean, func: string, args: any[]) {
+    private _rpc(
+        c: string, reply: boolean, func: string, args: any[],
+        transfer: Transferable[] = []
+    ) {
         const id = this._idx++;
-        const transfer: any[] = [];
-        for (const arg of args) {
-            if (arg && arg.transfer)
-                transfer.push.apply(transfer, arg.transfer);
-        }
-        let p: Promise<any> | null = null;
+        let p: Promise<any> | undefined;
         if (reply) {
             p = new Promise<any>((res, rej) => {
                 this._res[id] = res;

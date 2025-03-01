@@ -14,6 +14,12 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+export type RPCReceiver<T> = {
+    [K in keyof T]: T[K] extends (...args: infer A) => infer R
+        ? (...args: A) => (R | {return: R, transfer: Transferable[]})
+        : T[K];
+};
+
 export type RPCReceiverPort = {
     postMessage: typeof MessagePort.prototype.postMessage,
     addEventListener: typeof MessagePort.prototype.addEventListener
@@ -28,8 +34,12 @@ export function rpcReceiver(target: any, port: RPCReceiverPort) {
     port.addEventListener("message", async (ev: MessageEvent) => {
         const msg = ev.data;
         if (!msg || (msg.c !== "rpc" && msg.c !== "rpcv")) return;
+
+        // Get the function
         const f = target[msg.f];
         if (!f) return;
+
+        // Call it
         const ret: any = {
             c: "rpcRet",
             id: ev.data.id
@@ -44,11 +54,16 @@ export function rpcReceiver(target: any, port: RPCReceiverPort) {
                 console.error("Unhandled exception:", ret.ex);
             return;
         }
+
+        // Process the transfer out of the return
         let transfer: any[] = [];
-        if (ret.ret && ret.ret.transfer)
+        if (ret.ret && ret.ret.transfer) {
             transfer = ret.ret.transfer;
-        else if (ret.ex && ret.ex.transfer)
+            if ("return" in ret.ret)
+                ret.ret = ret.ret.return;
+        } else if (ret.ex && ret.ex.transfer) {
             transfer = ret.ex.transfer;
+        }
         port.postMessage(ret, transfer);
     });
 }

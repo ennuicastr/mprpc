@@ -6,16 +6,20 @@
   "types": "src/main.ts",
   "exports": {
       ".": {
-          "types": "./src/main.ts",
-          "default": "./src/main.js"
+          "default": "./src/main.js",
+          "types": "./src/main.ts"
       },
       "./receiver": {
-          "types": "./src/main-receiver.ts",
-          "default": "./src/main-receiver.js"
+          "default": "./src/rpc-receiver.js",
+          "types": "./src/rpc-receiver.ts"
+      },
+      "./receiver-worker": {
+          "default": "./src/main-receiver.js",
+          "types": "./src/main-receiver.ts"
       },
       "./target": {
-          "types": "./src/main-target.ts",
-          "default": "./src/main-target.js"
+          "default": "./src/main-target.js",
+          "types": "./src/main-target.ts"
       }
   },
   "scripts": {

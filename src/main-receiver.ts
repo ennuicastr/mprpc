@@ -17,6 +17,8 @@
 import * as rpcReceiverM from "./rpc-receiver";
 import * as rpcWorkerMainM from "./rpc-worker-main";
 
+export type RPCReceiver<T> = rpcReceiverM.RPCReceiver<T>;
+
 export type RCPReceiverPort = rpcReceiverM.RPCReceiverPort;
 export const rpcReceiver = rpcReceiverM.rpcReceiver;
 

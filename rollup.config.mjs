@@ -7,71 +7,35 @@ const plugins = [typescript({
     }
 })];
 
-export default [{
-    input: "src/main.ts",
-    output: [
-        {
-            file: "dist/mprpc.js",
-            format: "umd",
-            name: "MPRPC"
-        }, {
-            file: "dist/mprpc.min.js",
-            format: "umd",
-            name: "MPRPC",
-            plugins: [terser()]
-        }, {
-            file: "dist/mprpc.mjs",
-            format: "es"
-        }, {
-            file: "dist/mprpc.min.mjs",
-            format: "es",
-            plugins: [terser()]
-        }
-    ],
-    plugins
-}, {
-    input: "src/main-receiver.ts",
-    output: [
-        {
-            file: "dist/mprpc-receiver.js",
-            format: "umd",
-            name: "MPRPC"
-        }, {
-            file: "dist/mprpc-receiver.min.js",
-            format: "umd",
-            name: "MPRPC",
-            plugins: [terser()]
-        }, {
-            file: "dist/mprpc-receiver.mjs",
-            format: "es"
-        }, {
-            file: "dist/mprpc-receiver.min.mjs",
-            format: "es",
-            plugins: [terser()]
-        }
-    ],
-    plugins
+function dist(name, entry) {
+    return {
+        input: `src/${entry}.ts`,
+        output: [
+            {
+                file: `dist/${name}.js`,
+                format: "umd",
+                name: "MPRPC"
+            }, {
+                file: `dist/${name}.min.js`,
+                format: "umd",
+                name: "MPRPC",
+                plugins: [terser()]
+            }, {
+                file: `dist/${name}.mjs`,
+                format: "es"
+            }, {
+                file: `dist/${name}.min.mjs`,
+                format: "es",
+                plugins: [terser()]
+            }
+        ],
+        plugins
+    };
+}
 
-}, {
-    input: "src/main-target.ts",
-    output: [
-        {
-            file: "dist/mprpc-target.js",
-            format: "umd",
-            name: "MPRPC"
-        }, {
-            file: "dist/mprpc-target.min.js",
-            format: "umd",
-            name: "MPRPC",
-            plugins: [terser()]
-        }, {
-            file: "dist/mprpc-target.mjs",
-            format: "es"
-        }, {
-            file: "dist/mprpc-target.min.mjs",
-            format: "es",
-            plugins: [terser()]
-        }
-    ],
-    plugins
-}];
+export default [
+    dist("mprpc", "main"),
+    dist("mprpc-receiver", "rpc-receiver"),
+    dist("mprpc-receiver-worker", "main-receiver"),
+    dist("mprpc-target", "main-target")
+];

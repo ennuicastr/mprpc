@@ -14,19 +14,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-import * as asyncT from "./async";
-import * as cWorker from "./collectable-worker";
-import * as rpcTarget from "./rpc-target";
-import * as rpcWorker from "./rpc-worker";
-
-export type Async<T> = asyncT.Async<T>;
-
-export type CollectableWorker = cWorker.CollectableWorker;
-export const CollectableWorker = cWorker.CollectableWorker;
-
-export type RPCTargetPort = rpcTarget.RPCTargetPort;
-export type RPCTarget = rpcTarget.RPCTarget;
-export const RPCTarget = rpcTarget.RPCTarget;
-
-export type RPCWorker = rpcWorker.RPCWorker;
-export const RPCWorker = rpcWorker.RPCWorker;
+export type Async<T> = {
+    [K in keyof T]: T[K] extends (...args: infer A) => infer R
+        ? (...args: A) => R extends Promise<any> ? R : Promise<R>
+        : T[K];
+};
