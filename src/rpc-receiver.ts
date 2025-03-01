@@ -16,7 +16,9 @@
 
 export type RPCReceiver<T> = {
     [K in keyof T]: T[K] extends (...args: infer A) => infer R
-        ? (...args: A) => (R | {return: R, transfer: Transferable[]})
+        ? R extends Promise<infer RP>
+            ? (...args: A) => (R | Promise<{return: RP, transfer: Transferable[]}>)
+            : (...args: A) => (R | {return: R, transfer: Transferable[]})
         : T[K];
 };
 
