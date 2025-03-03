@@ -35,7 +35,15 @@ export type RPCReceiverPort = {
 export function rpcReceiver(target: any, port: RPCReceiverPort) {
     port.addEventListener("message", (ev: MessageEvent) => {
         const msg = ev.data;
-        if (!msg || (msg.c !== "rpc" && msg.c !== "rpcv")) return;
+        if (!msg) return;
+
+        if (msg.c === "tee") {
+            // Another port for the same object
+            rpcReceiver(target, msg.args[0]);
+            return;
+        }
+
+        if (msg.c !== "rpc" && msg.c !== "rpcv") return;
 
         // Get the function
         const f = target[msg.f];
@@ -44,10 +52,10 @@ export function rpcReceiver(target: any, port: RPCReceiverPort) {
         // Call it
         const ret: any = {
             c: "rpcRet",
-            id: ev.data.id
+            id: msg.id
         };
         try {
-            ret.ret = f.apply(target, ev.data.args);
+            ret.ret = f.apply(target, msg.args);
         } catch (ex) {
             ret.ex = ex;
         }

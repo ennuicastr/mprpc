@@ -48,6 +48,15 @@ export class RPCTarget {
     }
 
     /**
+     * Create an extra port for this RPC object.
+     */
+    tee(): MessagePort {
+        const mc = new MessageChannel();
+        this._rpc("tee", false, "tee", [mc.port2], [mc.port2]);
+        return mc.port1;
+    }
+
+    /**
      * @private
      * Underlying RPC messenger method.
      */
