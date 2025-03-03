@@ -89,4 +89,7 @@ export function rpcReceiver(target: any, port: RPCReceiverPort) {
             }
         }
     });
+
+    const mport = <MessagePort> port;
+    if (mport.start) mport.start();
 }

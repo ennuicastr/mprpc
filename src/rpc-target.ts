@@ -26,6 +26,8 @@ export type RPCTargetPort = {
 export class RPCTarget {
     constructor(private _port: RPCTargetPort) {
         _port.addEventListener("message", this._onmessage.bind(this));
+        const mp = <MessagePort> _port;
+        if (mp.start) mp.start();
     }
 
     /**
