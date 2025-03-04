@@ -1,6 +1,6 @@
 {
   "name": "@ennuicastr/mprpc",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "RPC over MessagePorts and/or Workers",
   "main": "src/main.js",
   "types": "src/main.ts",
